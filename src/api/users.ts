@@ -2,7 +2,7 @@ import type { Request, Response } from "express";
 
 import { BadRequestError } from "./errors.js";
 import { respondWithJSON } from "./json.js";
-import { createUser } from "../db/queries/users.js";
+import { createUser, getUsers } from "../db/queries/users.js";
 
 export async function handlerUsersCreate(req: Request, res: Response) {
   type parameters = {
@@ -27,3 +27,7 @@ export async function handlerUsersCreate(req: Request, res: Response) {
     updatedAt: user.updatedAt,
   });
 }
+// export async function handlerUsersGetAll(_: Request, res: Response) {
+//   const users = await getUsers();
+//
+// }
