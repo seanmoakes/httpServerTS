@@ -35,4 +35,3 @@ function censorProfanity(text: string, replacer: string, ...profane: string[]) {
 
   return textWords.join(" ");
 }
-

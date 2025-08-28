@@ -1,9 +1,14 @@
 import { Request, Response, NextFunction } from "express";
 import { config } from "../config.js";
 import { respondWithError } from "./json.js";
-import { BadRequestError, UserNotAuthenticatedError, UserForbiddenError, NotFoundError } from "./errors.js";
+import {
+  BadRequestError,
+  UserNotAuthenticatedError,
+  UserForbiddenError,
+  NotFoundError
+} from "./errors.js";
 
-export function middlewareLogResponses(
+export function middlewareLogResponse(
   req: Request,
   res: Response,
   next: NextFunction,
@@ -22,7 +27,7 @@ export function middlewareMetricsInc(
   __: Response,
   next: NextFunction
 ) {
-  config.fileServerHits++;
+  config.api.fileServerHits++;
   next();
 }
 
