@@ -2,7 +2,7 @@ import type { Request, Response } from "express";
 
 import { BadRequestError } from "./errors.js";
 import { respondWithJSON } from "./json.js";
-import { createUser, getUsers } from "../db/queries/users.js";
+import { createUser } from "../db/queries/users.js";
 import { hashPassword } from "../auth.js";
 import { NewUser } from "../db/schema.js";
 

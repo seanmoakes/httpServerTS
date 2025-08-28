@@ -1,4 +1,6 @@
 import { compare, hash } from "bcrypt";
+import jwt, { JwtPayload } from "jsonwebtoken";
+import { UserNotAuthenticatedError } from "./api/errors";
 
 const saltRounds = 13;
 
@@ -9,3 +11,26 @@ export async function hashPassword(password: string): Promise<string> {
 export async function checkPasswordHash(password: string, hash: string) {
   return await compare(password, hash);
 }
+type payload = Pick<JwtPayload, "iss" | "sub" | "iat" | "exp">;
+
+export function makeJWT(userID: string, expiresIn: number, secret: string) {
+  let timeNow = Math.floor(Date.now() / 1000);
+  const pl: payload = {
+    iss: "chirpy",
+    sub: userID,
+    iat: timeNow,
+    exp: timeNow + expiresIn,
+  };
+  return jwt.sign(pl, secret);
+}
+export function validateJWT(tokenString: string, secret: string): string {
+  try {
+    const verifiedToken = jwt.verify(tokenString, secret);
+    return verifiedToken.sub as string;
+  } catch (error) {
+    throw new UserNotAuthenticatedError(
+      `Token invalid: ${(error as Error).message}`
+    );
+  }
+}
+
