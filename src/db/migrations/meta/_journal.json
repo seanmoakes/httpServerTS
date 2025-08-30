@@ -22,6 +22,20 @@
       "when": 1756393158565,
       "tag": "0002_normal_veda",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1756562454751,
+      "tag": "0003_magenta_blob",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1756568956200,
+      "tag": "0004_noisy_centennial",
+      "breakpoints": true
     }
   ]
 }

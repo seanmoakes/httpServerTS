@@ -2,6 +2,7 @@ import { compare, hash } from "bcrypt";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { BadRequestError, UserNotAuthenticatedError } from "./api/errors.js";
 import { Request } from "express";
+import { randomBytes } from "crypto";
 
 const saltRounds = 13;
 
@@ -53,3 +54,6 @@ export function extractBearerToken(header: string) {
   return splitAuth[1];
 }
 
+export function makeRefreshToken() {
+  return randomBytes(32).toString('hex');
+}
