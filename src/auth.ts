@@ -1,6 +1,7 @@
 import { compare, hash } from "bcrypt";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { UserNotAuthenticatedError } from "./api/errors";
+import { BadRequestError, UserNotAuthenticatedError } from "./api/errors.js";
+import { Request } from "express";
 
 const saltRounds = 13;
 
@@ -32,5 +33,23 @@ export function validateJWT(tokenString: string, secret: string): string {
       `Token invalid: ${(error as Error).message}`
     );
   }
+}
+
+export function getBearerToken(req: Request): string {
+  const authHeader = req.get("authorization");
+  if (!authHeader) {
+    throw new BadRequestError("Malformedd authorization header");
+  }
+
+  return extractBearerToken(authHeader);
+}
+
+export function extractBearerToken(header: string) {
+  const splitAuth = header.split(" ");
+  if (splitAuth.length < 2 || splitAuth[0] !== "Bearer") {
+    throw new BadRequestError("Malformedd authorization header");
+  }
+
+  return splitAuth[1];
 }
 

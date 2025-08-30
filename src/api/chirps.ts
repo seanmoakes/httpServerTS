@@ -3,21 +3,21 @@ import type { Request, Response } from "express";
 import { respondWithJSON } from "./json.js";
 import { BadRequestError, NotFoundError } from "./errors.js";
 import { createChirp, getChirpById, getChirps } from "../db/queries/chirps.js";
+import { getBearerToken, validateJWT } from "../auth.js";
+import { config } from "../config.js";
 
 export async function handlerChirpsCreate(req: Request, res: Response) {
   type parameters = {
     body: string;
-    userId: string;
   };
 
   const params: parameters = req.body;
 
-  const cleaned = validateChirp(params.body);
-  const chirp = await createChirp({ body: cleaned, userId: params.userId });
+  const token = getBearerToken(req);
+  const userId = validateJWT(token, config.jwt.secret);
 
-  if (!chirp) {
-    throw new Error("Unable to create new chirp");
-  }
+  const cleaned = validateChirp(params.body);
+  const chirp = await createChirp({ body: cleaned, userId: userId });
 
   respondWithJSON(res, 201, chirp);
 }
