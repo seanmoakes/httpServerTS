@@ -1,8 +1,8 @@
 import type { Request, Response } from "express";
 
 import { respondWithJSON } from "./json.js";
-import { BadRequestError, NotFoundError } from "./errors.js";
-import { createChirp, getChirpById, getChirps } from "../db/queries/chirps.js";
+import { BadRequestError, NotFoundError, UserForbiddenError } from "./errors.js";
+import { createChirp, deleteChirp, getChirpById, getChirps } from "../db/queries/chirps.js";
 import { getBearerToken, validateJWT } from "../auth.js";
 import { config } from "../config.js";
 
@@ -37,6 +37,28 @@ export async function handlerChirpsRetrieveById(req: Request, res: Response) {
 
   respondWithJSON(res, 200, chirp);
 }
+
+export async function handlerChirpsDelete(req: Request, res: Response) {
+  const { chirpId } = req.params;
+  const token = getBearerToken(req);
+  const userId = validateJWT(token, config.jwt.secret);
+
+  const chirp = await getChirpById(chirpId);
+  if (!chirp) {
+    throw new NotFoundError(`Chirp with chirpId: ${chirpId} not found`);
+  }
+
+  if (userId !== chirp.userId) {
+    throw new UserForbiddenError("Chirps can only be deleted by their Author");
+  }
+
+  const deleted = await deleteChirp(chirp.id);
+  if (!deleted) {
+    throw new Error(`Failed to delete chirp with chirpID: ${chirpId}`);
+  }
+  res.status(204).send();
+}
+
 function validateChirp(body: string) {
   const maxChirpLength = 140;
   if (body.length > maxChirpLength) {

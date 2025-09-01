@@ -13,6 +13,7 @@ import {
 } from "./api/middleware.js";
 import {
   handlerChirpsCreate,
+  handlerChirpsDelete,
   handlerChirpsRetrieve,
   handlerChirpsRetrieveById,
 } from "./api/chirps.js";
@@ -53,6 +54,9 @@ app.get("/api/chirps", (req, res, next) => {
 });
 app.get("/api/chirps/:chirpId", (req, res, next) => {
   Promise.resolve(handlerChirpsRetrieveById(req, res)).catch(next);
+});
+app.delete("/api/chirps/:chirpId", (req, res, next) => {
+  Promise.resolve(handlerChirpsDelete(req, res)).catch(next);
 });
 
 app.post("/api/users", (req, res, next) => {

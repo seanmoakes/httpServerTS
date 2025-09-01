@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 
-import { BadRequestError, UserNotAuthenticatedError } from "./errors.js";
+import { BadRequestError } from "./errors.js";
 import { respondWithJSON } from "./json.js";
 import { createUser, updateUser } from "../db/queries/users.js";
 import { getBearerToken, hashPassword, validateJWT } from "../auth.js";
