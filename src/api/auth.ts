@@ -1,11 +1,11 @@
 import type { Request, Response } from "express";
-import { checkPasswordHash, getBearerToken, makeJWT, makeRefreshToken, validateJWT } from "../auth.js";
+import { checkPasswordHash, getBearerToken, makeJWT, makeRefreshToken } from "../auth.js";
 import { getUserByEmail } from "../db/queries/users.js";
-import { BadRequestError, UserNotAuthenticatedError } from "./errors.js";
+import { UserNotAuthenticatedError } from "./errors.js";
 import { respondWithJSON } from "./json.js";
 import { UserResponse } from "./users.js";
 import { config } from "../config.js";
-import { saveRefreshToken, getToken, getUserFromRefreshToken, revokeToken } from "../db/queries/tokens.js";
+import { saveRefreshToken, getUserFromRefreshToken, revokeToken } from "../db/queries/tokens.js";
 
 type TokenResponse = {
   token: string;
@@ -46,6 +46,9 @@ export async function handlerUsersLogin(req: Request, res: Response) {
   const refreshToken = makeRefreshToken();
   const dbToken = await saveRefreshToken({ token: refreshToken, userId: user.id, expiresAt: expiresAt });
 
+  if (!dbToken) {
+    throw new UserNotAuthenticatedError("Could not save refresh token");
+  }
 
   respondWithJSON(res, 200, {
     id: user.id,
