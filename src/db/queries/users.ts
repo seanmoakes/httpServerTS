@@ -23,6 +23,17 @@ export async function updateUser(userId: string, email: string, hashedPassword: 
   return rows[0] as User;
 }
 
+export async function upgradeUser(userId: string) {
+  const rows = await db.update(users)
+    .set({
+      isChirpyRed: true,
+    })
+    .where(
+      eq(users.id, userId)
+    ).returning();
+  return rows[0] as User;
+}
+
 export async function getUsers() {
   const result = await db.select().from(users);
   return result;
